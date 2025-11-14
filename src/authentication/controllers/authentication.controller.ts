@@ -11,14 +11,12 @@ export class AuthenticationController {
 
   @Post('register')
   async register(@Body() body: IUserCreate) {
-    console.log("Register request body:", body);
     const validatedData = userRegisterSchema.parse(body);
     return this.authService.register(validatedData);
   }
 
   @Post('login')
-  async login(@Body() body: IUserCreate) {
-    console.log("Login request body:", body);
+  async login(@Body() body: Partial<IUserCreate>) {
     const validatedData = userLoginSchema.parse(body);
     return this.authService.login(validatedData.email, validatedData.password);
   }
@@ -32,7 +30,6 @@ export class AuthenticationController {
   @Get('me')
   @UseGuards(JwtGuard)
   async getCurrentUser(@CurrentUser() user: IUser) {
-    console.log("Fetching profile for user:", user);
     return this.authService.getUserProfile(user._id);
   }
 }

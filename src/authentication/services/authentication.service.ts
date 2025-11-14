@@ -11,7 +11,6 @@ export class AuthenticationService {
   ) {}
 
   async register(userData: any) {
-    console.log("Registering user with data:", userData)
     const user = await this.usersService.createUser({
       ...userData,
       role: UserRole.DEVELOPER,
@@ -78,7 +77,7 @@ export class AuthenticationService {
     return {
       accessToken,
       refreshToken,
-      expiresIn: 900, // 15 minutes in seconds
+      expiresIn: 900,
     }
   }
 

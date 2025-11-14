@@ -16,10 +16,10 @@ export class User extends Document {
   @Prop({ required: true })
   passwordHash: string
 
-  @Prop({ enum: UserRole, default: UserRole.DEVELOPER })
+  @Prop({ type: String, enum: UserRole, default: UserRole.DEVELOPER })
   role: UserRole
 
-  @Prop({ enum: UserStatus, default: UserStatus.ACTIVE })
+  @Prop({ type: String, enum: UserStatus, default: UserStatus.ACTIVE })
   status: UserStatus
 
   @Prop()
