@@ -4,10 +4,10 @@ import { Injectable } from '@nestjs/common';
 export class AppService {
   getHello() {
     return {
-      status: "UP",
+      status: 'UP',
       timestamp: new Date().toISOString(),
-      service: "Scrum Board API",
-      version: "0.0.1",
-    }
+      service: 'Scrum Board API',
+      version: '0.0.1',
+    };
   }
 }

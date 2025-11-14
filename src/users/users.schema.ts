@@ -1,45 +1,45 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose"
-import { Document } from "mongoose"
-import { UserRole, UserStatus } from "src/types/user"
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
+import { UserRole, UserStatus } from 'src/types/user';
 
 @Schema({ timestamps: true })
 export class User extends Document {
   @Prop({ required: true, unique: true })
-  email: string
+  email: string;
 
   @Prop({ required: true })
-  firstName: string
+  firstName: string;
 
   @Prop({ required: true })
-  lastName: string
+  lastName: string;
 
   @Prop({ required: true })
-  passwordHash: string
+  passwordHash: string;
 
   @Prop({ type: String, enum: UserRole, default: UserRole.DEVELOPER })
-  role: UserRole
+  role: UserRole;
 
   @Prop({ type: String, enum: UserStatus, default: UserStatus.ACTIVE })
-  status: UserStatus
+  status: UserStatus;
 
   @Prop()
-  avatar?: string
+  avatar?: string;
 
   @Prop({ default: null })
-  lastLoginAt: Date
+  lastLoginAt: Date;
 
   @Prop({ type: Object, default: {} })
   preferences: {
-    theme?: "light" | "dark"
-    notifications?: boolean
-    emailNotifications?: boolean
-  }
+    theme?: 'light' | 'dark';
+    notifications?: boolean;
+    emailNotifications?: boolean;
+  };
 
   @Prop([String])
-  projectIds: string[]
+  projectIds: string[];
 
-  createdAt: Date
-  updatedAt: Date
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export const UsersSchema = SchemaFactory.createForClass(User)
+export const UsersSchema = SchemaFactory.createForClass(User);

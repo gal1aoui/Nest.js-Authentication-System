@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
-import { AuthenticationService } from '../services/authentication.service';
-import { userLoginSchema, userRegisterSchema } from 'src/types';
-import { JwtGuard } from 'src/common/guards/jwt.guard';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
-import { type IUser, type IUserCreate } from 'src/types/user';
+import { JwtGuard } from 'src/common/guards/jwt.guard';
+import { userLoginSchema, userRegisterSchema } from 'src/types';
+import type { IUser, IUserCreate } from 'src/types/user';
+import { AuthenticationService } from '../services/authentication.service';
 
 @Controller('authentication')
 export class AuthenticationController {

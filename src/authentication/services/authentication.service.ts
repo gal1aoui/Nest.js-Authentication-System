@@ -1,7 +1,8 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common"
-import { JwtService } from "@nestjs/jwt"
-import { UserRole } from "src/types/user"
-import { UsersService } from "src/users/services/users.service"
+/** biome-ignore-all lint/suspicious/noExplicitAny: todo */
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { UserRole } from 'src/types/user';
+import { UsersService } from 'src/users/services/users.service';
 
 @Injectable()
 export class AuthenticationService {
@@ -14,9 +15,9 @@ export class AuthenticationService {
     const user = await this.usersService.createUser({
       ...userData,
       role: UserRole.DEVELOPER,
-    })
+    });
 
-    const tokens = await this.generateTokens(user._id.toString())
+    const tokens = await this.generateTokens(user._id.toString());
 
     return {
       success: true,
@@ -28,21 +29,21 @@ export class AuthenticationService {
         role: user.role,
       },
       ...tokens,
-    }
+    };
   }
 
   async login(email: string, password: string) {
-    const user = await this.usersService.validateUser(email, password)
+    const user = await this.usersService.validateUser(email, password);
 
     if (!user) {
-      throw new UnauthorizedException("Invalid credentials")
+      throw new UnauthorizedException('Invalid credentials');
     }
 
-    const tokens = await this.generateTokens(user._id.toString())
+    const tokens = await this.generateTokens(user._id.toString());
 
     await this.usersService.updateUser(user._id.toString(), {
       lastLoginAt: new Date(),
-    } as any)
+    } as any);
 
     return {
       success: true,
@@ -54,43 +55,43 @@ export class AuthenticationService {
         role: user.role,
       },
       ...tokens,
-    }
+    };
   }
 
   async generateTokens(userId: string) {
-    const user = await this.usersService.getUserById(userId)
+    const user = await this.usersService.getUserById(userId);
 
     const payload = {
       sub: userId,
       email: user.email,
       role: user.role,
-    }
+    };
 
     const accessToken = this.jwtService.sign(payload, {
-      expiresIn: "15m",
-    })
+      expiresIn: '15m',
+    });
 
     const refreshToken = this.jwtService.sign(payload, {
-      expiresIn: "7d",
-    })
+      expiresIn: '7d',
+    });
 
     return {
       accessToken,
       refreshToken,
       expiresIn: 900,
-    }
+    };
   }
 
   async getUserProfile(userId: string) {
-    return this.usersService.getUserById(userId)
+    return this.usersService.getUserById(userId);
   }
 
   async validateToken(token: string) {
     try {
-      const payload = this.jwtService.verify(token)
-      return payload
-    } catch (error) {
-      throw new UnauthorizedException("Invalid token")
+      const payload = this.jwtService.verify(token);
+      return payload;
+    } catch (_) {
+      throw new UnauthorizedException('Invalid token');
     }
   }
 }

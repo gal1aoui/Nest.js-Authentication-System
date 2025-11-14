@@ -1,12 +1,12 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService } from './users.service';
+import { Test, type TestingModule } from '@nestjs/testing';
+import { compare, hash } from 'bcrypt';
 import { UserRole, UserStatus } from 'src/types/user';
 import { UsersRepository } from '../repositories/users.repository';
-import * as bcrypt from 'bcrypt';
+import { UsersService } from './users.service';
 
 jest.mock('bcrypt');
 
-describe('UsersService', () => {
+describe('Users Service', () => {
   let service: UsersService;
   let usersRepository: UsersRepository;
 
@@ -44,7 +44,7 @@ describe('UsersService', () => {
 
   it('should create a new user', async () => {
     (usersRepository.findByEmail as jest.Mock).mockResolvedValue(null);
-    (bcrypt.hash as jest.Mock).mockResolvedValue('hashedpassword');
+    (hash as jest.Mock).mockResolvedValue('hashedpassword');
     (usersRepository.create as jest.Mock).mockResolvedValue(mockUser);
 
     const result = await service.createUser({
@@ -56,7 +56,7 @@ describe('UsersService', () => {
     });
 
     expect(usersRepository.findByEmail).toHaveBeenCalledWith(mockUser.email);
-    expect(bcrypt.hash).toHaveBeenCalled();
+    expect(hash).toHaveBeenCalled();
     expect(usersRepository.create).toHaveBeenCalled();
     expect(result).toEqual(mockUser);
   });
@@ -64,7 +64,7 @@ describe('UsersService', () => {
   it('should return user without passwordHash when getting by ID', async () => {
     (usersRepository.findById as jest.Mock).mockResolvedValue(mockUser);
 
-    const { passwordHash, ...expectedUser } = mockUser;
+    const { passwordHash: _, ...expectedUser } = mockUser;
 
     const result = await service.getUserById('1');
 
@@ -76,28 +76,30 @@ describe('UsersService', () => {
     const updatedUser = { ...mockUser, lastName: 'Updated' };
     (usersRepository.update as jest.Mock).mockResolvedValue(updatedUser);
 
-    const { passwordHash, ...expectedUser } = updatedUser;
+    const { passwordHash: _, ...expectedUser } = updatedUser;
 
     const result = await service.updateUser('1', { lastName: 'Updated' });
 
-    expect(usersRepository.update).toHaveBeenCalledWith('1', { lastName: 'Updated' });
+    expect(usersRepository.update).toHaveBeenCalledWith('1', {
+      lastName: 'Updated',
+    });
     expect(result).toEqual(expectedUser);
   });
 
   it('should validate user credentials', async () => {
     (usersRepository.findByEmail as jest.Mock).mockResolvedValue(mockUser);
-    (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+    (compare as jest.Mock).mockResolvedValue(true);
 
     const result = await service.validateUser('test@test.com', 'Passw0rd');
 
     expect(usersRepository.findByEmail).toHaveBeenCalledWith('test@test.com');
-    expect(bcrypt.compare).toHaveBeenCalled();
+    expect(compare).toHaveBeenCalled();
     expect(result).toBe(mockUser);
   });
 
   it('should throw error for invalid password', async () => {
     (usersRepository.findByEmail as jest.Mock).mockResolvedValue(mockUser);
-    (bcrypt.compare as jest.Mock).mockResolvedValue(false);
+    (compare as jest.Mock).mockResolvedValue(false);
 
     await expect(
       service.validateUser('test@test.com', 'wrong'),

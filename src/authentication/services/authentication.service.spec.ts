@@ -1,10 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { AuthenticationService } from './authentication.service';
-import { UsersService } from 'src/users/services/users.service';
-import { JwtService } from '@nestjs/jwt';
 import { UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { Test, type TestingModule } from '@nestjs/testing';
+import { UsersService } from 'src/users/services/users.service';
+import { AuthenticationService } from './authentication.service';
 
-describe('AuthenticationService', () => {
+describe('Auth Service', () => {
   let service: AuthenticationService;
   let usersService: UsersService;
   let jwtService: JwtService;
@@ -69,7 +69,7 @@ describe('AuthenticationService', () => {
       (jwtService.sign as jest.Mock).mockReturnValue(mockToken);
 
       const result = await service.login(mockUser.email, mockUser.password);
-      
+
       expect(result.success).toBe(true);
       expect(result).toHaveProperty('accessToken', mockToken);
     });
@@ -77,9 +77,9 @@ describe('AuthenticationService', () => {
     it('should throw UnauthorizedException for invalid credentials', async () => {
       (usersService.validateUser as jest.Mock).mockResolvedValue(null);
 
-      await expect(
-        service.login('invalid@test.com', '123' ),
-      ).rejects.toThrow(UnauthorizedException);
+      await expect(service.login('invalid@test.com', '123')).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
   });
 });

@@ -1,9 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { AuthenticationController } from './authentication.controller';
+import { Test, type TestingModule } from '@nestjs/testing';
+import type { UserRole } from 'src/types/user';
 import { AuthenticationService } from '../services/authentication.service';
-import { UserRole } from 'src/types/user';
+import { AuthenticationController } from './authentication.controller';
 
-describe('AuthenticationController', () => {
+describe('Auth Controller', () => {
   let controller: AuthenticationController;
   let authService: AuthenticationService;
 
@@ -41,7 +41,7 @@ describe('AuthenticationController', () => {
 
       const result = await controller.register(mockUser);
 
-      const {role, ...trimmedMockUser} = mockUser; // Exclude role for IUserCreate type
+      const { role: _, ...trimmedMockUser } = mockUser; // Exclude role for IUserCreate type
 
       expect(authService.register).toHaveBeenCalledWith(trimmedMockUser);
       expect(result).toBe(mockToken);
@@ -59,7 +59,10 @@ describe('AuthenticationController', () => {
 
       const result = await controller.login(userCredentials);
 
-      expect(authService.login).toHaveBeenCalledWith(userCredentials.email, userCredentials.password);
+      expect(authService.login).toHaveBeenCalledWith(
+        userCredentials.email,
+        userCredentials.password,
+      );
       expect(result).toBe(mockToken);
     });
   });
